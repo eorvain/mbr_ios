@@ -44,8 +44,8 @@ class MBR {
     ///
     /// - Parameter array: point cloud (no need to be a convex hull)
     /// - Returns: The MBR. (An array of 4 points described by each corner).
-    static func compute(_ array:[CGPoint])->[CGPoint]{
-        guard array.count >= 3 else{return []}
+    static func compute(_ array: [CGPoint]) -> [CGPoint] {
+        guard array.count >= 3 else { return [] }
         
         //compute convex hull
         let convexhull = ConvexHull().closedConvexHull(array)
@@ -56,10 +56,10 @@ class MBR {
         //Let's start with the basic box.
         var minrect = computeBox(convexhull)
         var minarea = computeBoxArea(convexhull)
-        var fitAngle:CGFloat = 0.0
+        var fitAngle: CGFloat = 0.0
         
         //Go find a better orientation to find the MBR.
-        for (_, edge) in edges.enumerated(){
+        for (_, edge) in edges.enumerated() {
             let point1 = edge.0
             let point2 = edge.1
             
@@ -71,7 +71,7 @@ class MBR {
             let area = computeBoxArea(convexhullTmp)
             
             //Make a decision, which orientation gives the minimal area?
-            if(area < minarea){
+            if(area < minarea) {
                 print("Found better orientation")
                 minarea = area
                 minrect = computeBox(convexhullTmp)
@@ -103,7 +103,7 @@ class MBR {
     ///   - point1: first point
     ///   - point2: second point
     /// - Returns: distance along x axis
-    static func dx(_ point1:CGPoint,_ point2:CGPoint)->CGFloat{
+    static func dx(_ point1: CGPoint, _ point2: CGPoint) -> CGFloat{
         return point2.x - point1.x
     }
     
@@ -113,7 +113,7 @@ class MBR {
     ///   - point1: first point
     ///   - point2: second point
     /// - Returns: distance along y axis
-    static  func dy(_ point1:CGPoint,_ point2:CGPoint)->CGFloat{
+    static  func dy(_ point1:CGPoint, _ point2: CGPoint) -> CGFloat {
         return point2.y - point1.y
     }
     
@@ -123,7 +123,7 @@ class MBR {
     ///   - point1: first point
     ///   - point2: second point
     /// - Returns: result
-    static  func dy2(_ point1:CGPoint,_ point2:CGPoint)->CGFloat{
+    static  func dy2(_ point1: CGPoint,_ point2: CGPoint) -> CGFloat {
         return pow(point2.y - point1.y, 2)
     }
     
@@ -133,7 +133,7 @@ class MBR {
     ///   - point1: first point
     ///   - point2: second point
     /// - Returns: result
-    static  func dx2(_ point1:CGPoint,_ point2:CGPoint)->CGFloat{
+    static  func dx2(_ point1: CGPoint,_ point2: CGPoint) -> CGFloat {
         return pow(point2.x - point1.x, 2)
     }
     
@@ -143,7 +143,7 @@ class MBR {
     ///   - point1: first point
     ///   - point2: second point
     /// - Returns: distance without dimension
-    static func distance(_ point1:CGPoint,_ point2:CGPoint)->CGFloat{
+    static func distance(_ point1:CGPoint, _ point2: CGPoint) -> CGFloat {
         return sqrt(dx2(point1, point2) + dy2(point1, point2))
     }
     
@@ -152,7 +152,7 @@ class MBR {
     /// - Complexity : O(n)
     /// - Parameter array: point array
     /// - Returns: x barycenter
-    static func barycenterX(_ array:[CGPoint])->CGFloat{
+    static func barycenterX(_ array: [CGPoint]) -> CGFloat {
         let ponderation = 1.0 /  CGFloat(array.count)
         let baryX = array.reduce(0,{$0 + $1.x * ponderation})
         return baryX
@@ -163,7 +163,7 @@ class MBR {
     /// - Complexity : O(n)
     /// - Parameter array: point array
     /// - Returns: y barycenter
-    static func barycenterY(_ array:[CGPoint])->CGFloat{
+    static func barycenterY(_ array: [CGPoint]) -> CGFloat {
         let ponderation = 1.0 /  CGFloat(array.count)
         let baryY = array.reduce(0,{$0 + $1.y * ponderation})
         return baryY
@@ -174,7 +174,7 @@ class MBR {
     /// - Complexity : O(n)
     /// - Parameter array: point array
     /// - Returns: barycenter point
-    static func barycenter(_ array:[CGPoint])->CGPoint{
+    static func barycenter(_ array: [CGPoint]) -> CGPoint {
         let bary = CGPoint(x: barycenterX(array),
                            y: barycenterY(array))
         return bary
@@ -188,7 +188,7 @@ class MBR {
     ///   - point1: point1
     ///   - point2: point2
     /// - Returns: angle in radian
-    static func angleX(_ point1:CGPoint, _ point2:CGPoint)->CGFloat{
+    static func angleX(_ point1: CGPoint, _ point2: CGPoint) -> CGFloat {
         return atan2(dy(point1, point2) , dx(point1, point2))
     }
     
@@ -198,7 +198,7 @@ class MBR {
     ///   - point: the point to rotate
     ///   - angle: rotation angle (radian)
     /// - Returns: the rotated point
-    static func rotateFromOrigin(_ point:CGPoint, angle:CGFloat)->CGPoint{
+    static func rotateFromOrigin(_ point: CGPoint, angle: CGFloat) -> CGPoint {
         let s = sin(angle)
         let c = cos(angle)
         return CGPoint(x:c * point.x - s * point.y, y: s * point.x + c * point.y)
@@ -210,7 +210,7 @@ class MBR {
     ///   - array: the points to rotate
     ///   - angle: rotation angle (radian)
     /// - Returns: the rotated points
-    static func rotateFromOrigin(_ array:[CGPoint], angle:CGFloat)->[CGPoint]{
+    static func rotateFromOrigin(_ array:[CGPoint], angle:CGFloat) -> [CGPoint] {
         return array.map{rotateFromOrigin($0, angle: angle)}
     }
     
@@ -220,20 +220,20 @@ class MBR {
     ///
     /// - Parameter array: path
     /// - Returns: the array of edge. Each edge is a tuple
-    static func computeEdgeOfPath(_ array:[CGPoint])->[(CGPoint,CGPoint)]{
+    static func computeEdgeOfPath(_ array: [CGPoint]) -> [(CGPoint,CGPoint)] {
         if(array.count < 3){
             print("Error : cannot compute edge for an array count less than 3")
             return []
         }
         
-        var edges:[(CGPoint,CGPoint)] = []
+        var edges:[(CGPoint, CGPoint)] = []
         
         var previousPoint = array[0]
-        for (index,point) in array.enumerated(){
-            if(index == array.startIndex){
+        for (index,point) in array.enumerated() {
+            if index == array.startIndex{
                 previousPoint = point
             }
-            else if( (index+1) == array.endIndex){
+            else if (index+1) == array.endIndex {
                 edges += [(previousPoint,point)]
                 edges += [(point,array[0])]
             }
@@ -252,7 +252,7 @@ class MBR {
     /// - Complexity : O(n)
     /// - Parameter array: array of points
     /// - Returns: the x minimal value
-    static func minx(_ array:[CGPoint])->CGFloat{
+    static func minx(_ array: [CGPoint]) -> CGFloat {
         return array.reduce(CGFloat.greatestFiniteMagnitude, { min($0, $1.x) })
     }
     
@@ -261,7 +261,7 @@ class MBR {
     /// - Complexity : O(n)
     /// - Parameter array: array of points
     /// - Returns: the y minimal value
-    static func miny(_ array:[CGPoint])->CGFloat{
+    static func miny(_ array: [CGPoint]) -> CGFloat {
         return array.reduce(CGFloat.greatestFiniteMagnitude, { min($0, $1.y) })
     }
     
@@ -270,7 +270,7 @@ class MBR {
     /// - Complexity : O(n)
     /// - Parameter array: array of points
     /// - Returns: the x maximal value
-    static func maxx(_ array:[CGPoint])->CGFloat{
+    static func maxx(_ array: [CGPoint]) -> CGFloat {
         return array.reduce(-CGFloat.greatestFiniteMagnitude, { max($0, $1.x) })
     }
     
@@ -279,7 +279,7 @@ class MBR {
     /// - Complexity : O(n)
     /// - Parameter array: array of points
     /// - Returns: the y maximal value
-    static func maxy(_ array:[CGPoint])->CGFloat{
+    static func maxy(_ array: [CGPoint]) -> CGFloat{
         return array.reduce(-CGFloat.greatestFiniteMagnitude, { max($0, $1.y) })
     }
     
@@ -287,7 +287,7 @@ class MBR {
     ///
     /// - Parameter rect: rectangle
     /// - Returns: array of four points
-    static func computeCorner(_ rect:CGRect)->[CGPoint]{
+    static func computeCorner(_ rect: CGRect) -> [CGPoint] {
         let bottomleft = rect.origin
         let topleft = rect.offsetBy(dx: 0, dy: rect.height).origin
         let topRight = rect.offsetBy(dx: rect.width, dy: rect.height).origin
@@ -301,7 +301,7 @@ class MBR {
     ///
     /// - Parameter array: the point cloud
     /// - Returns: the rectangle
-    static func computeBox(_ array:[CGPoint])->CGRect{
+    static func computeBox(_ array: [CGPoint]) -> CGRect {
         let minx = MBR.minx(array)
         let miny = MBR.miny(array)
         let maxx = MBR.maxx(array)
@@ -319,7 +319,7 @@ class MBR {
     ///
     /// - Parameter array: the point cloud
     /// - Returns: the area (without dimension)
-    static func computeBoxArea(_ array:[CGPoint])->CGFloat{
+    static func computeBoxArea(_ array: [CGPoint]) -> CGFloat {
         let box = computeBox(array)
         let area = rectArea(box)
         return area
@@ -329,7 +329,7 @@ class MBR {
     ///
     /// - Parameter rect: rectangle
     /// - Returns: area (without dimension)
-    static func rectArea(_ rect:CGRect)->CGFloat{
+    static func rectArea(_ rect:CGRect) -> CGFloat {
         return rect.width * rect.height
     }
     

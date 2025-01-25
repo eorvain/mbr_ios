@@ -47,14 +47,16 @@ class ViewController: UIViewController {
         drawImage.translatesAutoresizingMaskIntoConstraints = false
         btnRestart.translatesAutoresizingMaskIntoConstraints = false
         
+        let guide = view.safeAreaLayoutGuide
+        
         NSLayoutConstraint.activate([
-            drawImage.topAnchor.constraint(equalTo: view.topAnchor),
-            drawImage.leftAnchor.constraint(equalTo: view.leftAnchor),
-            drawImage.widthAnchor.constraint(equalTo: view.widthAnchor),
-            drawImage.heightAnchor.constraint(equalTo: view.heightAnchor),
+            drawImage.topAnchor.constraint(equalTo: guide.topAnchor),
+            drawImage.leftAnchor.constraint(equalTo: guide.leftAnchor),
+            drawImage.widthAnchor.constraint(equalTo: guide.widthAnchor),
+            drawImage.heightAnchor.constraint(equalTo: guide.heightAnchor),
             
-            btnRestart.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            btnRestart.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            btnRestart.bottomAnchor.constraint(equalTo: guide.bottomAnchor),
+            btnRestart.centerXAnchor.constraint(equalTo: guide.centerXAnchor)
         ])
     }
 }
